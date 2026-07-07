@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator | Jarfanmade</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:800px;
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:25px;
+    padding:30px;
+    color:white;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    text-align:center;
+    opacity:.8;
+    margin-bottom:25px;
+}
+
+.input-group{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+input{
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    text-align:center;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    background:#00e5ff;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.result{
+    display:none;
+    margin-top:25px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.card{
+    background:rgba(255,255,255,.15);
+    border-radius:15px;
+    padding:20px;
+    text-align:center;
+}
+
+.number{
+    font-size:32px;
+    font-weight:bold;
+}
+
+.label{
+    opacity:.8;
+}
+
+.extra{
+    margin-top:20px;
+    background:rgba(255,255,255,.1);
+    padding:20px;
+    border-radius:15px;
+    line-height:2;
+}
+
+@media(max-width:600px){
+
+.cards{
+    grid-template-columns:1fr;
+}
+
+.input-group{
+    grid-template-columns:1fr;
+}
+
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>🎂 Know your AGE</h1>
+<p class="subtitle">Enter your Date of Birth manually</p>
+
+<div class="input-group">
+<input type="number" id="day" placeholder="Day" min="1" max="31">
+<input type="number" id="month" placeholder="Month" min="1" max="12">
+<input type="number" id="year" placeholder="Year">
+</div>
+
+<button id="actionBtn" onclick="calculateAge()">
+    Calculate Age
+</button>
+
+<div class="result" id="result">
+
+<div class="cards">
+
+<div class="card">
+<div class="number" id="years">0</div>
+<div class="label">Years</div>
+</div>
+
+<div class="card">
+<div class="number" id="months">0</div>
+<div class="label">Months</div>
+</div>
+
+<div class="card">
+<div class="number" id="days">0</div>
+<div class="label">Days</div>
+</div>
+
+</div>
+
+<div class="extra" id="extraInfo"></div>
+
+</div>
+
+
+
+<div style="margin-top:25px;border-top:1px solid rgba(255,255,255,.3);padding-top:20px">
+<button id="toggleInterestBtn" type="button" onclick="toggleInterestPanel()">💰 Interest Calculator</button>
+<div id="interestPanel" style="display:none;margin-top:15px">
+
+<h2>💰 Interest Calculator</h2>
+<p>Principal</p><input id="loanAmount" type="number" placeholder="Amount">
+<p style="margin-top:10px">Monthly Interest (%)</p><input id="loanRate" type="number" value="2" step="0.01">
+
+<p style="margin-top:10px">Start Date</p>
+<div class="input-group">
+<input type="number" id="loanDay" placeholder="Day" min="1" max="31">
+<input type="number" id="loanMonth" placeholder="Month" min="1" max="12">
+<input type="number" id="loanYear" placeholder="Year">
+</div>
+
+<label style="display:block;margin-top:12px">
+<input type="checkbox" id="customEndToggle" onchange="document.getElementById('endDateBox').style.display=this.checked?'block':'none'">
+ Use Custom End Date
+</label>
+<div id="endDateBox" style="display:none">
+<p style="margin-top:10px">End Date</p>
+<div class="input-group">
+<input type="number" id="endDay" placeholder="Day" min="1" max="31">
+<input type="number" id="endMonth" placeholder="Month" min="1" max="12">
+<input type="number" id="endYear" placeholder="Year">
+</div>
+</div>
+<button onclick="calcInterest()">Calculate Interest</button>
+<div id="interestResult" class="extra" style="display:none"></div>
+</div></div>
+<script>
+function toggleInterestPanel(){const p=document.getElementById('interestPanel');const b=document.getElementById('toggleInterestBtn');if(p.style.display==='none'){p.style.display='block';b.innerText='➖ Hide Interest Calculator';}else{p.style.display='none';b.innerText='💰 Interest Calculator';}}
+function calcInterest(){
+ const P=parseFloat(document.getElementById('loanAmount').value);
+ const R=parseFloat(document.getElementById('loanRate').value);
+ const sd=new Date(+loanYear.value,+loanMonth.value-1,+loanDay.value);
+ let ed;
+ if(document.getElementById('customEndToggle').checked){
+   if(!endDay.value||!endMonth.value||!endYear.value){alert('Please fill end date');return;}
+   ed=new Date(+endYear.value,+endMonth.value-1,+endDay.value);
+ }else{
+   ed=new Date();
+ }
+ if(!P||!loanDay.value||!loanMonth.value||!loanYear.value){alert('Please fill start date');return;}
+ let fullMonths=(ed.getFullYear()-sd.getFullYear())*12+(ed.getMonth()-sd.getMonth());
+ let anchor=new Date(sd);anchor.setMonth(anchor.getMonth()+fullMonths);
+ if(anchor>ed){fullMonths--;anchor=new Date(sd);anchor.setMonth(anchor.getMonth()+fullMonths);}
+ const extraDays=Math.floor((ed-anchor)/86400000);
+ const dim=new Date(anchor.getFullYear(),anchor.getMonth()+1,0).getDate();
+ const totalMonths=fullMonths+extraDays/dim;
+ const interest=P*(R/100)*totalMonths;
+ document.getElementById('interestResult').style.display='block';
+ document.getElementById('interestResult').innerHTML=
+ `<b>Full Months:</b> ${fullMonths}<br>
+ <b>Extra Days:</b> ${extraDays}<br>
+ <b>Total Months:</b> ${totalMonths.toFixed(3)}<br>
+ <b>Interest:</b> ₹ ${interest.toFixed(2)}<br>
+ <b>Total Amount:</b> ₹ ${(P+interest).toFixed(2)}`;
+}
+
+</script>
+
+
+<script>
+
+function calculateAge(){
+
+let day=parseInt(document.getElementById("day").value);
+let month=parseInt(document.getElementById("month").value);
+let year=parseInt(document.getElementById("year").value);
+
+if(!day || !month || !year){
+alert("Please enter complete date");
+return;
+}
+
+let birthDate=new Date(year,month-1,day);
+
+if(
+birthDate.getDate()!=day ||
+birthDate.getMonth()!=month-1 ||
+birthDate.getFullYear()!=year
+){
+alert("Invalid Date");
+return;
+}
+
+let today=new Date();
+
+let years=today.getFullYear()-year;
+let months=today.getMonth()-(month-1);
+let days=today.getDate()-day;
+
+if(days<0){
+months--;
+days+=new Date(
+today.getFullYear(),
+today.getMonth(),
+0
+).getDate();
+}
+
+if(months<0){
+years--;
+months+=12;
+}
+
+document.getElementById("years").innerText=years;
+document.getElementById("months").innerText=months;
+document.getElementById("days").innerText=days;
+
+let totalDays=Math.floor(
+(today-birthDate)/(1000*60*60*24)
+);
+
+let totalWeeks=Math.floor(totalDays/7);
+let totalMonths=years*12+months;
+let totalHours=totalDays*24;
+
+let nextBirthday=new Date(
+today.getFullYear(),
+month-1,
+day
+);
+
+if(nextBirthday<today){
+nextBirthday.setFullYear(
+today.getFullYear()+1
+);
+}
+
+let birthdayCountdown=Math.ceil(
+(nextBirthday-today)/(1000*60*60*24)
+);
+
+const weekDays=[
+"Sunday",
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday"
+];
+
+let birthDayName=
+weekDays[birthDate.getDay()];
+
+document.getElementById("extraInfo").innerHTML=`
+
+<b>📅 Born On:</b> ${birthDayName}<br>
+
+<b>📆 Total Months:</b> ${totalMonths}<br>
+
+<b>📅 Total Weeks:</b> ${totalWeeks.toLocaleString()}<br>
+
+<b>📈 Total Days:</b> ${totalDays.toLocaleString()}<br>
+
+<b>⏰ Total Hours:</b> ${totalHours.toLocaleString()}<br>
+
+<b>🎉 Next Birthday In:</b> ${birthdayCountdown} Days
+
+`;
+
+document.getElementById("result").style.display="block";
+
+let btn=document.getElementById("actionBtn");
+
+btn.innerHTML="Calculate More ➜";
+btn.style.background="#ffffff";
+btn.onclick=resetCalculator;
+
+}
+
+function resetCalculator(){
+
+document.getElementById("day").value="";
+document.getElementById("month").value="";
+document.getElementById("year").value="";
+
+document.getElementById("result").style.display="none";
+
+let btn=document.getElementById("actionBtn");
+
+btn.innerHTML="Calculate Age";
+btn.style.background="#00e5ff";
+btn.onclick=calculateAge;
+
+document.getElementById("day").focus();
+
+}
+
+// ENTER KEY NAVIGATION
+
+document.getElementById("day").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        document.getElementById("month").focus();
+    }
+});
+
+document.getElementById("month").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        document.getElementById("year").focus();
+    }
+});
+
+document.getElementById("year").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+
+        let btn = document.getElementById("actionBtn");
+
+        if(btn.innerText.includes("Calculate More")){
+            resetCalculator();
+        }else{
+            calculateAge();
+        }
+
+    }
+});
+
+// GLOBAL ENTER SUPPORT
+
+document.addEventListener("keydown", function(e){
+
+    if(e.key !== "Enter") return;
+
+    let btn = document.getElementById("actionBtn");
+
+    if(btn.innerText.includes("Calculate More")){
+
+        if(document.activeElement.id !== "day" &&
+           document.activeElement.id !== "month" &&
+           document.activeElement.id !== "year"){
+
+            resetCalculator();
+        }
+    }
+
+});
+</script>
+
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  const t=new Date();
+  const d=document.getElementById('endDay');
+  const m=document.getElementById('endMonth');
+  const y=document.getElementById('endYear');
+  if(d && !d.value) d.value=t.getDate();
+  if(m && !m.value) m.value=t.getMonth()+1;
+  if(y && !y.value) y.value=t.getFullYear();
+});
+</script>
+
+</body>
+</html>
